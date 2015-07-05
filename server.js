@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 
 var Instagramer = require('./app/scripts/Instagramer');
-var Test = require('./app/scripts/Test')
+
 
 app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'jade');
@@ -12,40 +12,19 @@ app.get('/', function (req, res) {
   res.render('index', { title: 'Social Stuff'});
 });
 
- 
-app.get('/test', function(req, res){
-  res.send('testing')
-})
 
-
-app.get('/images/popular', function (req, res) {
-  var type = 'media_popular'
-
-  var instagramer = new Instagramer(type, function(err, results){
-    if(err){
-      console.log('Error: ', err);
-      res.send('Error: ', err);
-    }
-    res.render('images', {images: results});
-  });
+app.get('/api/instagram/tag_media_recent', function (req, res) {
   
+  var instagramer = new Instagramer();
+  instagramer.tag_media_recent({
+    tag: req.query.tag
+  }, function(err, results){
+    if(err){ return res.send('error: ', err); }
+    console.log('result: ', results.length);
+    res.send(results);
+  })
+
 });
-
-app.get('/api/instagram/:type', function (req, res) {
-  
-  var type = req.params.type
-
-  var instagramer = new Instagramer(type, function(err, results){
-    if(err){
-      console.log('Error: ', err);
-      res.send('Error: ', err);
-    }
-    res.send(results)
-  });
-  
-});
-
-
 
 
 
@@ -59,6 +38,4 @@ var server = app.listen(3535, function () {
 
 
 
-
-var Ben = new Test();
 

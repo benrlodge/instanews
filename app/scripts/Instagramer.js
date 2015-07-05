@@ -7,48 +7,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var _ = require('underscore');
 var ig = require('instagram-node').instagram();
 
-var VALID_TYPE = ['media_popular'];
-
 var Instagramer = (function () {
-  function Instagramer(type, callback) {
+  function Instagramer(obj) {
     _classCallCheck(this, Instagramer);
-
-    this.type = type;
-    this.callback = callback;
-
-    if (!type) {
-      return callback({ error: 'provide an api request type' }, {});
-    }
-    if (!callback) {
-      return callback({ error: 'provide a callback' }, {});
-    }
 
     ig.use({
       client_id: process.env.IG_CLIENT_ID,
       client_secret: process.env.IG_CLIENT_SECRET
     });
-
-    // Check if type exists in mapping
-    var exists = _.contains(VALID_TYPE, this.type);
-    if (!exists) {
-      return callback({ error: 'Media type `' + this.type + '` does not exist' }, {});
-    }
-
-    this[this.type]();
   }
 
   _createClass(Instagramer, [{
-    key: 'media_popular',
-
-    // API Requests - must live in VALID_TYPE array
-    value: function media_popular() {
-      var self = this;
-
-      ig.media_popular(function (err, medias) {
-        self.callback(err, medias);
+    key: 'tag_media_recent',
+    value: function tag_media_recent(options, callback) {
+      ig.tag_media_recent(options.tag, function (err, medias, pagination) {
+        callback(err, medias);
       });
-    } //-
-
+    }
   }]);
 
   return Instagramer;
